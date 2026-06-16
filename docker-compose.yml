@@ -1,0 +1,60 @@
+services:
+  # ── MQTT Broker ──────────────────────────────────────────────
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: tele_mqtt
+    ports:
+      - "1883:1883"      # MQTT TCP
+      - "9001:9001"      # MQTT WebSocket (optional)
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mqtt_data:/mosquitto/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-t", "$$SYS/#", "-C", "1", "-i", "healthcheck", "-W", "3"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend API (FastAPI + SQLite + WebSocket + MQTT subscriber) ──
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tele_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_PATH=/app/data/telemetry.db
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+    volumes:
+      - telemetry_data:/app/data
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── React Frontend (served via nginx) ───────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tele_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  telemetry_data:
+    driver: local
+  mqtt_data:
+    driver: local

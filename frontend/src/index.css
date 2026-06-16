@@ -1,0 +1,66 @@
+/* ============================================================
+   Global Design System — IoT Telemetry Dashboard
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-gradient: radial-gradient(circle at 15% 50%, #0a0f25, #050711 60%);
+  --surface: rgba(15, 21, 35, 0.4);
+  --surface-2: rgba(22, 29, 48, 0.6);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(99, 102, 241, 0.3);
+  --accent: #818cf8;
+  --accent-glow: rgba(129, 140, 248, 0.25);
+  --green: #10b981;
+  --green-dim: rgba(16, 185, 129, 0.15);
+  --red: #ef4444;
+  --red-dim: rgba(239, 68, 68, 0.15);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245, 158, 11, 0.15);
+  --teal: #06b6d4;
+  --text: #f8fafc;
+  --text-2: #cbd5e1;
+  --text-3: #64748b;
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glass: blur(16px);
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #050711;
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--accent-glow);
+  color: #fff;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
